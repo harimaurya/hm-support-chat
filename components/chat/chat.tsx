@@ -1,8 +1,8 @@
 "use client";
-import { FaHeadset, FaXmark } from "react-icons/fa6";
+import { FaHeadset, FaXmark, FaPaperPlane } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IChatMessage } from "./chat.model";
 
 export default function Chat() {
@@ -10,6 +10,17 @@ export default function Chat() {
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState<IChatMessage[]>([]);
   const lastItemRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setMessages([
+      {
+        id: "1",
+        text: "Welcome to the support chat! How can I assist you today?",
+        role: "assistant",
+        timestamp: new Date(),
+      },
+    ]);
+  }, []);
 
   const handleToggleChat = () => {
     setIsOpen(!isOpen);
@@ -29,6 +40,18 @@ export default function Chat() {
     }
   };
 
+  const chatMessageClass = (role: "user" | "assistant") => {
+    return role === "user"
+      ? "bg-blue-100 text-blue-800 rounded-br-none self-start"
+      : "bg-green-100 text-green-800 rounded-tl-none self-end";
+  }
+
+  const chatContainerClass = (role: "user" | "assistant") => {
+    return role === "user"
+      ? "justify-end"
+      : "justify-start";
+  }
+
   return (
     <>
       <Button
@@ -41,11 +64,11 @@ export default function Chat() {
       </Button>
 
       <div
-        className={`chat-box flex absolute bottom-10 right-10 w-80 h-150 bg-white shadow-lg rounded-lg flex flex-col ${
+        className={`chat-box flex absolute bottom-10 right-10 w-100 h-150 bg-white shadow-lg inset-shadow-xs rounded-lg flex-col ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="chat-header flex justify-between bg-gray-200 p-2 rounded-t-lg">
+        <div className="chat-header flex justify-between border-b p-4 rounded-t-lg">
           <span className="flex items-center gap-2">
             <FaHeadset className="size-5" />
             <span className="font-semibold">Support Chat</span>
@@ -58,32 +81,42 @@ export default function Chat() {
         <div className="grow chat-messages p-4 overflow-y-auto">
           <ul className="chat-message-list flex-1">
             {messages.map((message) => (
-              <li key={message.id} className={`chat-message ${message.role}`}>
-                <span className="chat-message-text">{message.text}</span>
-                <span className="chat-message-timestamp">
-                  {message.timestamp.toLocaleTimeString()}
-                </span>
+              <li
+                key={message.id}
+                className={`flex w-fullchat-message mb-2 ${message.role} ${chatContainerClass(message.role)}`}
+              >
+                <div className={`chat-message-container p-2 flex flex-col rounded-lg max-w-9/10 ${chatMessageClass(message.role)}`}>
+                  <span className="chat-message-text text-md">
+                    {message.text}
+                  </span>
+                  <span className="chat-message-timestamp text-xs mt-1 text-right">
+                    {message.timestamp.toLocaleTimeString()}
+                  </span>
+                </div>
               </li>
             ))}
           </ul>
           <div ref={lastItemRef} className="invisible h-0"></div>
         </div>
-        <div className="chat-input flex items-end border border-t-1 bg-gray-100 p-2 rounded-b-lg gap-2">
+        <div className="chat-input flex items-end border border-t-1 p-2 rounded-b-lg gap-2">
           <div className="chat-message-input grow">
             <Textarea
               name="chat-message"
               placeholder="Type your message..."
-              className="flex-grow"
+              className="flex-grow min-h-0"
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
             />
           </div>
           <div className="chat-send-button inline-flex items-end">
             <Button
-              className="h-10 px-4 bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+              variant="ghost"
+              className="cursor-pointer text-gray-600 hover:text-gray-700"
               onClick={() => handleSendMessage(messageInput)}
+              size="icon"
+              disabled={!messageInput.trim()}
             >
-              Send
+              <FaPaperPlane className="size-5" />
             </Button>
           </div>
         </div>
