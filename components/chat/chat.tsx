@@ -1,24 +1,35 @@
 "use client";
-import { FaHeadset } from "react-icons/fa6";
+import { FaHeadset, FaXmark } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 export default function Chat() {
+
+const [isOpen, setIsOpen] = useState(false);
+
+const handleToggleChat = () => {
+  setIsOpen(!isOpen);
+}
+
   return (
     <>
       <Button
         variant="ghost"
         size="icon"
         className="chat-icon cursor-pointer fixed bottom-10 right-10 rounded-full bg-green-600 hover:bg-green-700 text-white hover:text-white size-15"
+        onClick={handleToggleChat}
       >
         <FaHeadset className="size-8" />
       </Button>
 
-      <div className="chat-box flex absolute bottom-10 right-10 w-80 h-150 bg-white shadow-lg rounded-lg flex flex-col">
-        <div className="chat-header bg-gray-200 p-2 rounded-t-lg">
+      <div className={`chat-box flex absolute bottom-10 right-10 w-80 h-150 bg-white shadow-lg rounded-lg flex flex-col ${isOpen ? 'block' : 'hidden'}`}>
+        <div className="chat-header flex justify-between bg-gray-200 p-2 rounded-t-lg">
           <span className="flex items-center gap-2">
-            <FaHeadset className="size-5" /> Support Chat
+            <FaHeadset className="size-5" /> 
+            <span className="font-semibold">Support Chat</span>
           </span>
+          <FaXmark className="size-5 cursor-pointer" onClick={handleToggleChat} />
         </div>
         <div className="grow chat-messages p-4">
           {/* Messages will go here */}
