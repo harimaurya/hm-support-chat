@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import { IChatMessage } from "./chat.model";
+import { useChatConfig } from "@/store/chat-config";
 
 export default function Chat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState<IChatMessage[]>([]);
   const lastItemRef = useRef<HTMLDivElement | null>(null);
+  const { state } = useChatConfig();
 
   useEffect(() => {
     setMessages([
@@ -59,19 +61,19 @@ export default function Chat() {
         size="icon"
         className="chat-icon cursor-pointer fixed bottom-10 right-10 rounded-full bg-green-600 hover:bg-green-700 text-white hover:text-white size-15"
         onClick={handleToggleChat}
+        disabled={!state.appName || !state.openaiApiKey }
       >
         <FaHeadset className="size-8" />
       </Button>
-
       <div
         className={`chat-box flex absolute bottom-10 right-10 w-100 h-150 bg-white shadow-lg inset-shadow-xs rounded-lg flex-col ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="chat-header flex justify-between border-b p-4 rounded-t-lg">
+        <div className="chat-header flex justify-between border-b p-4 rounded-t-lg text-gray-900">
           <span className="flex items-center gap-2">
             <FaHeadset className="size-5" />
-            <span className="font-semibold">Support Chat</span>
+            <span className="font-semibold">{state.appName} Chat</span>
           </span>
           <FaXmark
             className="size-5 cursor-pointer"
@@ -111,7 +113,7 @@ export default function Chat() {
           <div className="chat-send-button inline-flex items-end">
             <Button
               variant="ghost"
-              className="cursor-pointer text-gray-600 hover:text-gray-700"
+              className="cursor-pointer text-gray-900 hover:text-gray-950"
               onClick={() => handleSendMessage(messageInput)}
               size="icon"
               disabled={!messageInput.trim()}

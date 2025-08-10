@@ -1,11 +1,40 @@
+"use client";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import useChatConfig from "@/store/chat-config";
 
 export default function AppConfig() {
+  const {
+    setAppName,
+    setOpenAiApiKey,
+    setSupabaseUrl,
+    setSupabaseServiceRoleKey,
+  } = useChatConfig();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "app-name":
+        setAppName(value);
+        break;
+      case "openai-api-key":
+        setOpenAiApiKey(value);
+        break;
+      case "supabase-url":
+        setSupabaseUrl(value);
+        break;
+      case "supabase-service-role-key":
+        setSupabaseServiceRoleKey(value);
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <div className="app-config w-full max-w-md p-5">
       <h1 className="text-xl font-bold mb-4">Application Configuration</h1>
-      
+
       <form className="space-y-4">
         <div className="form-group space-y-2">
           <Label htmlFor="app-name">Application Name</Label>
@@ -15,6 +44,7 @@ export default function AppConfig() {
             type="text"
             placeholder="Enter application name"
             className="mt-1 block w-full"
+            onChange={handleInputChange}
           />
         </div>
         {/* OPENAI_API_KEY=sk-... */}
@@ -26,6 +56,7 @@ export default function AppConfig() {
             type="password"
             placeholder="Enter OpenAI API Key"
             className="mt-1 block w-full"
+            onChange={handleInputChange}
           />
         </div>
 
@@ -38,6 +69,7 @@ export default function AppConfig() {
             type="text"
             placeholder="Enter Supabase URL"
             className="mt-1 block w-full"
+            onChange={handleInputChange}
           />
         </div>
         {/* SUPABASE_SERVICE_ROLE_KEY=YOUR-SERVICE-ROLE-KEY */}
@@ -51,6 +83,7 @@ export default function AppConfig() {
             type="password"
             placeholder="Enter Supabase Service Role Key"
             className="mt-1 block w-full"
+            onChange={handleInputChange}
           />
         </div>
       </form>
