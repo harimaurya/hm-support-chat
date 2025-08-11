@@ -66,7 +66,7 @@ export default function Chat() {
         <FaHeadset className="size-8" />
       </Button>
       <div
-        className={`chat-box flex absolute bottom-10 right-10 w-100 h-150 bg-white shadow-lg inset-shadow-xs rounded-lg flex-col ${
+        className={`chat-box flex fixed bottom-10 right-10 w-100 h-150 bg-white shadow-lg inset-shadow-xs rounded-lg flex-col ${
           isOpen ? "block" : "hidden"
         }`}
       >
