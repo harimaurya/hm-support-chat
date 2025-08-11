@@ -3,29 +3,22 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useChatConfig from "@/store/chat-config";
+import { Textarea } from "../ui/textarea";
 
 export default function AppConfig() {
   const {
-    setAppName,
-    setOpenAiApiKey,
-    setSupabaseUrl,
-    setSupabaseServiceRoleKey,
+    setGeminiApiKey,
+    setKnowledgebase,
   } = useChatConfig();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     switch (name) {
-      case "app-name":
-        setAppName(value);
+      case "gemini-api-key":
+        setGeminiApiKey(value);
         break;
-      case "openai-api-key":
-        setOpenAiApiKey(value);
-        break;
-      case "supabase-url":
-        setSupabaseUrl(value);
-        break;
-      case "supabase-service-role-key":
-        setSupabaseServiceRoleKey(value);
+      case "knowledgebase":
+        setKnowledgebase(value);
         break;
       default:
         break;
@@ -36,53 +29,27 @@ export default function AppConfig() {
       <h1 className="text-xl font-bold mb-4">Application Configuration</h1>
 
       <form className="space-y-4">
+        {/* GEMINI Key */}
         <div className="form-group space-y-2">
-          <Label htmlFor="app-name">Application Name</Label>
+          <Label htmlFor="gemini-api-key">Gemini API Key</Label>
           <Input
-            id="app-name"
-            name="app-name"
-            type="text"
-            placeholder="Enter application name"
-            className="mt-1 block w-full"
-            onChange={handleInputChange}
-          />
-        </div>
-        {/* OPENAI_API_KEY=sk-... */}
-        <div className="form-group space-y-2">
-          <Label htmlFor="openai-api-key">OpenAI API Key</Label>
-          <Input
-            id="openai-api-key"
-            name="openai-api-key"
+            id="gemini-api-key"
+            name="gemini-api-key"
             type="password"
-            placeholder="Enter OpenAI API Key"
+            placeholder="Enter Gemini API Key"
             className="mt-1 block w-full"
             onChange={handleInputChange}
           />
         </div>
 
-        {/* SUPABASE_URL=https://YOUR-PROJECT.supabase.co */}
+        {/* Knowledgebase */}
         <div className="form-group space-y-2">
-          <Label htmlFor="supabase-url">Supabase URL</Label>
-          <Input
-            id="supabase-url"
-            name="supabase-url"
-            type="text"
-            placeholder="Enter Supabase URL"
-            className="mt-1 block w-full"
-            onChange={handleInputChange}
-          />
-        </div>
-        {/* SUPABASE_SERVICE_ROLE_KEY=YOUR-SERVICE-ROLE-KEY */}
-        <div className="form-group space-y-2">
-          <Label htmlFor="supabase-service-role-key">
-            Supabase Service Role Key
-          </Label>
-          <Input
-            id="supabase-service-role-key"
-            name="supabase-service-role-key"
-            type="password"
-            placeholder="Enter Supabase Service Role Key"
-            className="mt-1 block w-full"
+          <Label htmlFor="knowledgebase">Knowledgebase</Label>
+          <Textarea
+            id="knowledgebase"
+            name="knowledgebase"
+            placeholder="Enter content"
+            className="mt-1 block w-full min-h-100"
             onChange={handleInputChange}
           />
         </div>

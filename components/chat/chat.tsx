@@ -61,7 +61,7 @@ export default function Chat() {
         size="icon"
         className="chat-icon cursor-pointer fixed bottom-10 right-10 rounded-full bg-green-600 hover:bg-green-700 text-white hover:text-white size-15"
         onClick={handleToggleChat}
-        disabled={!state.appName || !state.openaiApiKey }
+        disabled={!state.geminiApiKey || !state.knowledgebase }
       >
         <FaHeadset className="size-8" />
       </Button>
@@ -73,7 +73,7 @@ export default function Chat() {
         <div className="chat-header flex justify-between border-b p-4 rounded-t-lg text-gray-900">
           <span className="flex items-center gap-2">
             <FaHeadset className="size-5" />
-            <span className="font-semibold">{state.appName} Chat</span>
+            <span className="font-semibold">Support Chat</span>
           </span>
           <FaXmark
             className="size-5 cursor-pointer"

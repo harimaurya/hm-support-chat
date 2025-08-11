@@ -1,34 +1,25 @@
 "use client";
-
 // Setup a simple reducer using react reducer hook to manage app configuration e.g App name, OpenAI API Key, Supabase URL, etc.
 import { createContext, useContext, useReducer, ReactNode } from "react";
 
 interface ChatConfigState {
-  appName: string;
-  openaiApiKey: string;
-  supabaseUrl: string;
-  supabaseServiceRoleKey: string;
+  geminiApiKey: string;
+  knowledgebase: string;
 }
 
 type ChatConfigAction =
-  | { type: "SET_APP_NAME"; payload: string }
-  | { type: "SET_OPENAI_API_KEY"; payload: string }
-  | { type: "SET_SUPABASE_URL"; payload: string }
-  | { type: "SET_SUPABASE_SERVICE_ROLE_KEY"; payload: string };
+  | { type: "SET_GEMINI_API_KEY"; payload: string }
+  | { type: "SET_KNOWLEDGEBASE"; payload: string }
 
 export const initialState: ChatConfigState = {
-  appName: "",
-  openaiApiKey: "",
-  supabaseUrl: "",
-  supabaseServiceRoleKey: "",
+  geminiApiKey: "",
+  knowledgebase: "",
 };
 
 interface ChatConfigContextType {
   state: ChatConfigState;
-  setAppName: (appName: string) => void;
-  setOpenAiApiKey: (apiKey: string) => void;
-  setSupabaseUrl: (url: string) => void;
-  setSupabaseServiceRoleKey: (key: string) => void;
+  setGeminiApiKey: (apiKey: string) => void;
+  setKnowledgebase: (knowledgebase: string) => void;
 }
 
 const ChatConfigContext = createContext<ChatConfigContextType | undefined>(undefined);
@@ -38,14 +29,10 @@ export function chatConfigReducer(
   action: ChatConfigAction
 ): ChatConfigState {
   switch (action.type) {
-    case "SET_APP_NAME":
-      return { ...state, appName: action.payload };
-    case "SET_OPENAI_API_KEY":
-      return { ...state, openaiApiKey: action.payload };
-    case "SET_SUPABASE_URL":
-      return { ...state, supabaseUrl: action.payload };
-    case "SET_SUPABASE_SERVICE_ROLE_KEY":
-      return { ...state, supabaseServiceRoleKey: action.payload };
+    case "SET_GEMINI_API_KEY":
+      return { ...state, geminiApiKey: action.payload };
+    case "SET_KNOWLEDGEBASE":
+      return { ...state, knowledgebase: action.payload };
     default:
       return state;
   }
@@ -58,21 +45,15 @@ interface ChatConfigProviderProps {
 export function ChatConfigProvider({ children }: ChatConfigProviderProps) {
   const [state, dispatch] = useReducer(chatConfigReducer, initialState);
 
-  const setAppName = (appName: string) =>
-    dispatch({ type: "SET_APP_NAME", payload: appName });
-  const setOpenAiApiKey = (apiKey: string) =>
-    dispatch({ type: "SET_OPENAI_API_KEY", payload: apiKey });
-  const setSupabaseUrl = (url: string) =>
-    dispatch({ type: "SET_SUPABASE_URL", payload: url });
-  const setSupabaseServiceRoleKey = (key: string) =>
-    dispatch({ type: "SET_SUPABASE_SERVICE_ROLE_KEY", payload: key });
+  const setGeminiApiKey = (apiKey: string) =>
+    dispatch({ type: "SET_GEMINI_API_KEY", payload: apiKey });
+  const setKnowledgebase = (knowledgebase: string) =>
+    dispatch({ type: "SET_KNOWLEDGEBASE", payload: knowledgebase });
 
   const value = {
     state,
-    setAppName,
-    setOpenAiApiKey,
-    setSupabaseUrl,
-    setSupabaseServiceRoleKey,
+    setGeminiApiKey,
+    setKnowledgebase,
   };
 
   return (
@@ -98,10 +79,8 @@ export const chatConfigReducerFunction = chatConfigReducer;
 
 // Export the action types for use in components
 export const chatConfigActionTypes = {
-  SET_APP_NAME: "SET_APP_NAME",
-  SET_OPENAI_API_KEY: "SET_OPENAI_API_KEY",
-  SET_SUPABASE_URL: "SET_SUPABASE_URL",
-  SET_SUPABASE_SERVICE_ROLE_KEY: "SET_SUPABASE_SERVICE_ROLE_KEY",
+  SET_GEMINI_API_KEY: "SET_GEMINI_API_KEY",
+  SET_KNOWLEDGEBASE: "SET_KNOWLEDGEBASE",
 };
 
 // Export the hook for use in components
