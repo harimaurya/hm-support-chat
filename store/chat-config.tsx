@@ -1,4 +1,5 @@
 "use client";
+import { knowledgebase } from "@/lib/data";
 // Setup a simple reducer using react reducer hook to manage app configuration e.g App name, OpenAI API Key, Supabase URL, etc.
 import { createContext, useContext, useReducer, ReactNode } from "react";
 
@@ -13,7 +14,7 @@ type ChatConfigAction =
 
 export const initialState: ChatConfigState = {
   geminiApiKey: "",
-  knowledgebase: "",
+  knowledgebase: knowledgebase,
 };
 
 interface ChatConfigContextType {

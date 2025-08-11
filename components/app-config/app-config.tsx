@@ -9,6 +9,7 @@ export default function AppConfig() {
   const {
     setGeminiApiKey,
     setKnowledgebase,
+    state
   } = useChatConfig();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -36,6 +37,7 @@ export default function AppConfig() {
             id="gemini-api-key"
             name="gemini-api-key"
             type="password"
+            value={state.geminiApiKey}
             placeholder="Enter Gemini API Key"
             className="mt-1 block w-full"
             onChange={handleInputChange}
@@ -48,6 +50,7 @@ export default function AppConfig() {
           <Textarea
             id="knowledgebase"
             name="knowledgebase"
+            value={state.knowledgebase}
             placeholder="Enter content"
             className="mt-1 block w-full min-h-100"
             onChange={handleInputChange}
