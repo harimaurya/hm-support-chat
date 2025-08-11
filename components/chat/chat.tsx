@@ -1,15 +1,17 @@
 "use client";
-import { FaHeadset, FaXmark, FaPaperPlane } from "react-icons/fa6";
+import { FaHeadset, FaXmark, FaPaperPlane, FaSpinner } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import { IChatMessage } from "./chat.model";
 import { useChatConfig } from "@/store/chat-config";
+import { GoogleGenAI } from "@google/genai";
 
 export default function Chat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState<IChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const lastItemRef = useRef<HTMLDivElement | null>(null);
   const { state } = useChatConfig();
 
@@ -28,31 +30,53 @@ export default function Chat() {
     setIsOpen(!isOpen);
   };
 
-  const handleSendMessage = (messageText: string) => {
+  const handleSendMessage = async (messageText: string) => {
+    const ai = new GoogleGenAI({ apiKey: state.geminiApiKey });
     const newMessage: IChatMessage = {
       id: Date.now().toString(),
       text: messageText,
       role: "user",
       timestamp: new Date(),
     };
-    setMessages([...messages, newMessage]);
+    setIsLoading(true);
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: messageText,
+    });
+
+    setIsLoading(false);
+    if (!response || !response.text) {
+      console.error("No response from AI");
+      return;
+    }
+
+    const aiMessage: IChatMessage = {
+      id: Date.now().toString(),
+      text: response.text,
+      role: "assistant",
+      timestamp: new Date(),
+    };
+
+    setMessages((prevMessages) => [...prevMessages, newMessage, aiMessage]);
+    setMessageInput(""); // Clear input after sending
 
     if (lastItemRef.current) {
       lastItemRef.current.scrollIntoView({ behavior: "smooth" });
     }
+
   };
+
 
   const chatMessageClass = (role: "user" | "assistant") => {
     return role === "user"
       ? "bg-blue-100 text-blue-800 rounded-br-none self-start"
       : "bg-green-100 text-green-800 rounded-tl-none self-end";
-  }
+  };
 
   const chatContainerClass = (role: "user" | "assistant") => {
-    return role === "user"
-      ? "justify-end"
-      : "justify-start";
-  }
+    return role === "user" ? "justify-end" : "justify-start";
+  };
 
   return (
     <>
@@ -61,7 +85,7 @@ export default function Chat() {
         size="icon"
         className="chat-icon cursor-pointer fixed bottom-10 right-10 rounded-full bg-green-600 hover:bg-green-700 text-white hover:text-white size-15"
         onClick={handleToggleChat}
-        disabled={!state.geminiApiKey || !state.knowledgebase }
+        disabled={!state.geminiApiKey || !state.knowledgebase}
       >
         <FaHeadset className="size-8" />
       </Button>
@@ -85,10 +109,16 @@ export default function Chat() {
             {messages.map((message) => (
               <li
                 key={message.id}
-                className={`flex w-fullchat-message mb-2 ${message.role} ${chatContainerClass(message.role)}`}
+                className={`flex w-fullchat-message mb-2 ${
+                  message.role
+                } ${chatContainerClass(message.role)}`}
               >
-                <div className={`chat-message-container p-2 flex flex-col rounded-lg max-w-9/10 ${chatMessageClass(message.role)}`}>
-                  <span className="chat-message-text text-md">
+                <div
+                  className={`chat-message-container p-2 flex flex-col rounded-lg max-w-9/10 ${chatMessageClass(
+                    message.role
+                  )}`}
+                >
+                  <span className="chat-message-text text-md whitespace-pre-wrap">
                     {message.text}
                   </span>
                   <span className="chat-message-timestamp text-xs mt-1 text-right">
@@ -105,9 +135,10 @@ export default function Chat() {
             <Textarea
               name="chat-message"
               placeholder="Type your message..."
-              className="flex-grow min-h-0"
+              className="flex-grow min-h-0 text-gray-900"
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
+                disabled={isLoading}
             />
           </div>
           <div className="chat-send-button inline-flex items-end">
@@ -116,9 +147,9 @@ export default function Chat() {
               className="cursor-pointer text-gray-900 hover:text-gray-950"
               onClick={() => handleSendMessage(messageInput)}
               size="icon"
-              disabled={!messageInput.trim()}
+              disabled={!messageInput.trim() || isLoading}
             >
-              <FaPaperPlane className="size-5" />
+                { isLoading ? <FaSpinner className="animate-spin" /> : <FaPaperPlane className="size-5" /> }
             </Button>
           </div>
         </div>
