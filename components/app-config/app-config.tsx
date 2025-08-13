@@ -6,13 +6,11 @@ import useChatConfig from "@/store/chat-config";
 import { Textarea } from "../ui/textarea";
 
 export default function AppConfig() {
-  const {
-    setGeminiApiKey,
-    setKnowledgebase,
-    state
-  } = useChatConfig();
+  const { setGeminiApiKey, setKnowledgebase, state } = useChatConfig();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     switch (name) {
       case "gemini-api-key":
@@ -27,8 +25,7 @@ export default function AppConfig() {
   };
   return (
     <div className="app-config w-full max-w-md p-5">
-      <h1 className="text-xl font-bold mb-4">Application Configuration</h1>
-
+      <h2 className="text-xl font-bold mb-4">Application Configuration</h2>
       <form className="space-y-4">
         {/* GEMINI Key */}
         <div className="form-group space-y-2">
