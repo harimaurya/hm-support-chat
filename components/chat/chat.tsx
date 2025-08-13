@@ -152,6 +152,9 @@ export default function Chat() {
               </li>
             ))}
           </ul>
+          {
+            isLoading && (<span className="text-gray-500 text-xs">Agent is typing...</span>)
+          }
           <div ref={lastItemRef} className="invisible h-0"></div>
         </div>
         <div className="chat-input flex items-end border border-t-1 p-2 rounded-b-lg gap-2">
