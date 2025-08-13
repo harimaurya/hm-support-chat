@@ -31,6 +31,15 @@ export default function About() {
           `}
           </code>
         </pre>
+        <p className="mt-2">
+          {" "}
+          Once configured, users can initiate a chat session by clicking the
+          chat icon in the bottom right corner of the screen.
+        </p>
+        <p className="mt-2">
+          Type &quot;<i>I am unable to login</i>&quot; to observe how the system
+          provides relevant information from the knowledge base.
+        </p>
       </article>
     </div>
   );
