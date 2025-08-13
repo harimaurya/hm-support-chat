@@ -1,4 +1,4 @@
-export const knowledgebase = JSON.stringify([
+export const knowledgebase = [
   {
     title: "How to Reset Your Password",
     content: `
@@ -89,4 +89,5 @@ export const knowledgebase = JSON.stringify([
             <p>Before contacting us, you might find answers in our <a href="/faq">Frequently Asked Questions (FAQ)</a> section or other support guides.</p>
         `,
   },
-]);
+];
+ 

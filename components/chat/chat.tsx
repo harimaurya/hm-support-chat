@@ -5,7 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import { IChatMessage } from "./chat.model";
 import { useChatConfig } from "@/store/chat-config";
-import { GoogleGenAI } from "@google/genai";
+import { getAIResponse, retrieveInformationBySematicSearch } from "@/lib/utils";
+import {
+  getAnswerBySemanticSearchPrompt,
+} from "@/lib/prompts";
 
 export default function Chat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,42 +34,62 @@ export default function Chat() {
   };
 
   const handleSendMessage = async (messageText: string) => {
-    const ai = new GoogleGenAI({ apiKey: state.geminiApiKey });
+    if (!messageText.trim()) return;
+
     const newMessage: IChatMessage = {
       id: Date.now().toString(),
       text: messageText,
       role: "user",
       timestamp: new Date(),
     };
+
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setMessageInput("");
     setIsLoading(true);
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: messageText,
-    });
+    try {
+      const retrievedDocs = await retrieveInformationBySematicSearch(
+        messageText,
+        state.geminiApiKey
+      );
+      const contextForAI = retrievedDocs.join("\n\n---\n\n");
+      const answerPrompt = getAnswerBySemanticSearchPrompt(
+        messageText,
+        contextForAI
+      );
 
-    setIsLoading(false);
-    if (!response || !response.text) {
-      console.error("No response from AI");
-      return;
+      const aiResponse = await getAIResponse(answerPrompt, state.geminiApiKey);
+
+      const aiMessage: IChatMessage = {
+        id: Date.now().toString(),
+        text: aiResponse.text,
+        role: "assistant",
+        timestamp: new Date(),
+      };
+
+      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+    } catch (error) {
+      console.error("Error retrieving documents:", error);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: Date.now().toString(),
+          text: "Oops! Something went wrong. Please try again.",
+          role: "assistant",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
 
-    const aiMessage: IChatMessage = {
-      id: Date.now().toString(),
-      text: response.text,
-      role: "assistant",
-      timestamp: new Date(),
-    };
-
-    setMessages((prevMessages) => [...prevMessages, newMessage, aiMessage]);
-    setMessageInput(""); // Clear input after sending
+    // Clear input after sending
 
     if (lastItemRef.current) {
       lastItemRef.current.scrollIntoView({ behavior: "smooth" });
     }
-
   };
-
 
   const chatMessageClass = (role: "user" | "assistant") => {
     return role === "user"
@@ -138,7 +161,7 @@ export default function Chat() {
               className="flex-grow min-h-0 text-gray-900"
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
-                disabled={isLoading}
+              disabled={isLoading}
             />
           </div>
           <div className="chat-send-button inline-flex items-end">
@@ -149,7 +172,11 @@ export default function Chat() {
               size="icon"
               disabled={!messageInput.trim() || isLoading}
             >
-                { isLoading ? <FaSpinner className="animate-spin" /> : <FaPaperPlane className="size-5" /> }
+              {isLoading ? (
+                <FaSpinner className="animate-spin" />
+              ) : (
+                <FaPaperPlane className="size-5" />
+              )}
             </Button>
           </div>
         </div>

@@ -14,7 +14,7 @@ type ChatConfigAction =
 
 export const initialState: ChatConfigState = {
   geminiApiKey: "",
-  knowledgebase: knowledgebase,
+  knowledgebase: JSON.stringify(knowledgebase),
 };
 
 interface ChatConfigContextType {
