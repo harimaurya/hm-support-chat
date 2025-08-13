@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HM Support Chat App",
-  description: "A LLM-powered support chat application",
+  description: "A modern, LLM-powered Retrieval Augmented Generation (RAG) system for seamless support chat experiences.",
 };
 
 export default function RootLayout({
