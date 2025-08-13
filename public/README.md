@@ -69,7 +69,7 @@ RAG Support Chat is an advanced AI-powered customer support solution that combin
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd sp-support-chat
+cd <repo-directory>
 ```
 
 2. Install dependencies:
