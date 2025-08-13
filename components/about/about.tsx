@@ -1,9 +1,9 @@
 export default function About() {
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold border-b-2 pb-2 border-b-gray-400 mb-4">
+      <h2 className="text-2xl font-bold border-b-2 pb-2 border-b-gray-400 mb-4">
         About This App
-      </h1>
+      </h2>
       <article className="text-gray-100">
         <p>
           This sample application showcases a Retrieval-Augmented Generation
