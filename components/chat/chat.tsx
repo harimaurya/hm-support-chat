@@ -50,7 +50,8 @@ export default function Chat() {
     try {
       const retrievedDocs = await retrieveInformationBySematicSearch(
         messageText,
-        state.geminiApiKey
+        state.geminiApiKey,
+        state.knowledgebase
       );
       const contextForAI = retrievedDocs.join("\n\n---\n\n");
       const answerPrompt = getAnswerBySemanticSearchPrompt(

@@ -1,21 +1,22 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { knowledgebase } from "./data";
 import { getSemanticSearchPrompt } from "./prompts";
 import { GoogleGenAI } from "@google/genai";
+import { HtmlPage } from "@/components/app-config/app-config.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const documentsForLLM = knowledgebase
-  .map(
+export const getDocumentsForLLM = (knowledgebase:string) => {
+  return (JSON.parse(knowledgebase) as HtmlPage[]).map(
     (page, index) =>
       `--- DOCUMENT START (ID: doc_${index + 1}, Title: ${page.title}) ---\n${
         page.content
       }\n--- DOCUMENT END (ID: doc_${index + 1}) ---`
   )
   .join("\n\n");
+}
 
 export const getAIResponse = async (messageText: string, apiKey: string) => {
   const ai = new GoogleGenAI({ apiKey });
@@ -27,9 +28,10 @@ export const getAIResponse = async (messageText: string, apiKey: string) => {
 
 export const retrieveInformationBySematicSearch = async (
   userQuery: string,
-  apiKey: string
+  apiKey: string,
+  knowledge: string,
 ) => {
-  const prompt = getSemanticSearchPrompt(userQuery, documentsForLLM);
+  const prompt = getSemanticSearchPrompt(userQuery, getDocumentsForLLM(knowledge));
 
   try {
     const aiResponse = await getAIResponse(prompt, apiKey);
