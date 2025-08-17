@@ -13,7 +13,8 @@ export default function Chat() {
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState<IChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const lastItemRef = useRef<HTMLDivElement | null>(null);
+  const messageInputRef = useRef<HTMLTextAreaElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const { state } = useChatConfig();
 
   useEffect(() => {
@@ -26,6 +27,16 @@ export default function Chat() {
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+    messageInputRef.current?.focus();
+  }, [messages]);
 
   const handleToggleChat = () => {
     setIsOpen(!isOpen);
@@ -44,8 +55,6 @@ export default function Chat() {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setMessageInput("");
     setIsLoading(true);
-    // Scroll to the last message
-    scrollIntoView();
 
     try {
       const retrievedDocs = await retrieveInformationBySematicSearch(
@@ -69,9 +78,7 @@ export default function Chat() {
       };
 
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
-    } catch (error) {
-      console.error("Error retrieving documents:", error);
-
+    } catch {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -83,9 +90,6 @@ export default function Chat() {
       ]);
     } finally {
       setIsLoading(false);
-      
-      // Scroll to the last message
-      scrollIntoView();
     }
   };
 
@@ -97,12 +101,6 @@ export default function Chat() {
 
   const chatContainerClass = (role: "user" | "assistant") => {
     return role === "user" ? "justify-end" : "justify-start";
-  };
-
-  const scrollIntoView = () => {
-    if (lastItemRef.current) {
-      lastItemRef.current.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   return (
@@ -131,7 +129,10 @@ export default function Chat() {
             onClick={handleToggleChat}
           />
         </div>
-        <div className="grow chat-messages p-4 overflow-y-auto">
+        <div
+          ref={chatContainerRef}
+          className="grow chat-messages p-4 overflow-y-auto"
+        >
           <ul className="chat-message-list flex-1">
             {messages.map((message) => (
               <li
@@ -155,20 +156,30 @@ export default function Chat() {
               </li>
             ))}
           </ul>
-          {isLoading && (
-            <span className="text-gray-500 text-xs">Agent is typing...</span>
-          )}
-          <div ref={lastItemRef} className="invisible h-0"></div>
         </div>
+        <span
+          className={`text-gray-500 text-xs ps-4 pb-2 ${
+            isLoading ? "block" : "hidden"
+          }`}
+        >
+          Agent is typing...
+        </span>
         <div className="chat-input flex items-end border border-t-1 p-2 rounded-b-lg gap-2">
           <div className="chat-message-input grow">
             <Textarea
+              ref={messageInputRef}
               name="chat-message"
               placeholder="Type your message..."
               className="flex-grow min-h-0 text-gray-900"
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
               disabled={isLoading}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(messageInput);
+                }
+              }}
             />
           </div>
           <div className="chat-send-button inline-flex items-end">
