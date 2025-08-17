@@ -31,7 +31,7 @@ export default function Chat() {
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight + 50,
+        top: chatContainerRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
@@ -78,9 +78,7 @@ export default function Chat() {
       };
 
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
-    } catch (error) {
-      console.error("Error retrieving documents:", error);
-
+    } catch {
       setMessages((prevMessages) => [
         ...prevMessages,
         {
