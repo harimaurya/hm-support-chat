@@ -6,9 +6,10 @@ export default function About() {
       </h2>
       <article className="text-gray-100">
         <p>
-          This sample application showcases a Retrieval-Augmented Generation
-          (RAG) system powered by a large language model (LLM), built to deliver
-          smooth and efficient support chat experiences.
+          This proof-of-concept application demonstrates a Retrieval-Augmented
+          Generation (RAG) system powered by a large language model (LLM),
+          designed to deliver fast, accurate, and natural support chat
+          experiences.
         </p>
         <p className="mt-2">
           It harnesses advanced AI capabilities to improve user interactions and
